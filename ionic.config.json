@@ -1,0 +1,7 @@
+{
+  "name": "FrontGremcor",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
