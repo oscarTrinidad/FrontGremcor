@@ -1,0 +1,175 @@
+<ion-header>
+  <ion-toolbar color="tertiary">
+    <ion-title>{{(oUsuario? oUsuario.iRol: 2) === 1? 'MANTENIMIENTO DE USUSARIOS' : 'DATOS PERSONALES'}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="oUsuario" color="success" fill="solid">
+        {{ oUsuario.iRol === 1? 'ADMIN: ': 'GESTOR: ' }} {{ oUsuario.sUsuario }}
+      </ion-button>
+      <ion-button color="light" fill="clear" (click)="cerrarSesion()">
+        Cerrar Sesión
+      </ion-button>
+      <!-- <ion-button *ngIf="user$ | async as user">
+        {{ user.usuario }}
+      </ion-button> -->
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content color="secondary">
+  <ion-grid>
+    <ion-row>
+      <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="4" sizeXl="4" *ngIf="administrador || editar">
+        <ion-card>
+          <ion-card-header color="medium">
+            <ion-row>
+              <ion-col size="11">
+                <span style="font-size: 15px;">
+                  <strong>{{ editar? 'EDITAR USUARIO' : 'REGISTRAR USUARIO'}}</strong>
+                </span>
+              </ion-col>
+              <ion-col size="1">
+                <ion-button color="light" size="small" shape="round" fill="clear" (click)="bDetalle = !bDetalle"
+                  *ngIf="bDetalle" style="margin-top: -5px;">
+                  <ion-icon slot="icon-only" name="caret-down-outline"></ion-icon>
+                </ion-button>
+                <ion-button color="light" size="small" shape="round" fill="clear" (click)="bDetalle = !bDetalle"
+                  *ngIf="!bDetalle" style="margin-top: -5px;">
+                  <ion-icon slot="icon-only" name="caret-back-outline"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-card-header>
+          <ion-card-content *ngIf="bDetalle">
+            <ion-row>
+              <ion-col size="12">
+                <ion-item>
+                  <ion-label position="floating">Nombre</ion-label>
+                  <ion-input type="text" [(ngModel)]="sNombreUsuario" (keyup.enter)="agregarUsuario()"
+                  (ionInput)="changeUsuario($event,'sNombreUsuario')"></ion-input>
+                  <small *ngIf="errorUsuario.sNombreUsuario !== ''" style="color: red;">
+                    &nbsp;&nbsp;&nbsp;{{errorUsuario.sNombreUsuario}}
+                  </small>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">Correo</ion-label>
+                  <ion-input type="text" [(ngModel)]="sCorreo" (keyup.enter)="agregarUsuario()"
+                  (ionInput)="changeUsuario($event,'sCorreo')"></ion-input>
+                  <small *ngIf="errorUsuario.sCorreo !== ''" style="color: red;">
+                    &nbsp;&nbsp;&nbsp;{{errorUsuario.sCorreo}}
+                  </small>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">DNI</ion-label>
+                  <ion-input type="text" [(ngModel)]="sDni" (keyup.enter)="agregarUsuario()" 
+                  (input)="validarInput($event,'dni')"
+                  pattern="/^[0-9]*$/"
+                  (ionInput)="changeUsuario($event,'sDni')"
+                  [disabled]="editar"></ion-input>
+                  <small *ngIf="errorUsuario.sDni !== ''" style="color: red;">
+                    &nbsp;&nbsp;&nbsp;{{errorUsuario.sDni}}
+                  </small>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Perfil</ion-label>
+                  <ion-select [(ngModel)]="iRol" [disabled]="idUsuario === oUsuario?.iIdUsuario"
+                  (ionChange)="changeUsuario($event,'iRol')">
+                    <ion-select-option *ngFor="let role of aListRoles" [value]="role.iIdRol">{{ role.sDescripcion }}</ion-select-option>
+                  </ion-select>
+                  <small *ngIf="errorUsuario.iRol !== ''" style="color: red;">
+                    &nbsp;&nbsp;&nbsp;{{errorUsuario.iRol}}
+                  </small>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" sizeSm="12" sizeMd="12" sizeLg="12" sizeXl="12">
+                <div class="text-end" *ngIf="!editar">
+                  <ion-button (click)="agregarUsuario()" color="success">Agregar</ion-button>
+                </div>
+                <div class="text-end" *ngIf="editar">
+                  <ion-button (click)="cancelarEdicion()" color="danger" size="small">Cancelar</ion-button>
+                  <ion-button (click)="agregarUsuario()" size="small">Editar</ion-button>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col sizeXs="12" sizeSm="12" sizeMd="12" [sizeLg]="(administrador || editar)? 8 : 12" [sizeXl]="(administrador || editar)? 8 : 12">
+        <div class="table-responsive">
+          <table class="table" style="margin-top: 5px; min-width: 900px;">
+            <thead>
+              <tr class="text-center" style="vertical-align: middle;">
+                <th style="width: 5%;" class="thead"></th>
+                <th style="width: 45%;" class="thead">Nombre</th>
+                <th style="width: 15%;" class="thead">Correo</th>
+                <th style="width: 15%;" class="thead">DNI</th>
+                <th style="width: 15%;" class="thead">Perfil</th>
+                <th style="width: 15%;" class="thead">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of aListUsuarios; let i = index">
+                <td class="text-center" style="vertical-align: middle;"
+                [ngClass]="{'tbody': idUsuario === item.iIdUsuario}">
+                  <ion-button (click)="traerUsuario(item)" color="light" size="small"
+                    shape="round" [disabled]="idUsuario === item.iIdUsuario"
+                    *ngIf="item.iEstadoUsuario === 1">
+                    <ion-icon name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="validarEstado(item,1)" color="success" size="small"
+                    shape="round" [disabled]="idUsuario === item.iIdUsuario"
+                    *ngIf="oUsuario?.iIdUsuario !== item.iIdUsuario && item.iEstadoUsuario === 0">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="validarEstado(item,0)" color="warning" size="small"
+                    shape="round" [disabled]="idUsuario === item.iIdUsuario"
+                    *ngIf="oUsuario?.iIdUsuario !== item.iIdUsuario && item.iEstadoUsuario === 1">
+                    <ion-icon name="ban-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="eliminacionUsuario(item)" color="danger" size="small"
+                    shape="round" [disabled]="idUsuario === item.iIdUsuario"
+                    *ngIf="oUsuario?.iIdUsuario !== item.iIdUsuario">
+                    <ion-icon name="close-outline"></ion-icon>
+                  </ion-button>
+                </td>
+                <td style="vertical-align: middle;" class="text-center"
+                [ngClass]="{'tbody': idUsuario === item.iIdUsuario}">
+                  <span>
+                    {{ item.sNombreUsuario }}
+                  </span>
+                </td>
+                <td style="vertical-align: middle;" class="text-center"
+                [ngClass]="{'tbody': idUsuario === item.iIdUsuario}">
+                  <span>
+                    {{ item.sCorreo }}
+                  </span>
+                </td>
+                <td style="vertical-align: middle;" class="text-center"
+                [ngClass]="{'tbody': idUsuario === item.iIdUsuario}">
+                  <span>
+                    {{ item.sDni }}
+                  </span>
+                </td>
+                <td style="vertical-align: middle;" class="text-center"
+                [ngClass]="{'tbody': idUsuario === item.iIdUsuario}">
+                  <span>
+                    {{ item.sRol }}
+                  </span>
+                </td>
+                <td style="vertical-align: middle;" class="text-center"
+                [ngClass]="{'tbody': idUsuario === item.iIdUsuario}">
+                  <span>
+                    {{ item.sEstadoUsuario }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="aListUsuarios.length === 0">
+                <td colSpan="5" class="text-center">
+                  <strong>NO EXISTE USUARIOS ...</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

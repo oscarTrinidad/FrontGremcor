@@ -1,0 +1,38 @@
+<ion-content class="ion-padding" color="secondary">
+  <div class="login-container">
+    <ion-card class="ion-padding">
+      <ion-card-header>
+        <ion-card-title class="text-right">LOGIN</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form (ngSubmit)="iniciar()">
+          <ion-grid>
+            <ion-row>
+              <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="6" sizeXl="6">
+                <ion-row>
+                  <ion-col size="12">
+                    <ion-item lines="full">
+                      <ion-label position="floating">Usuario</ion-label>
+                      <ion-input type="text" [(ngModel)]="usuario" name="username"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col size="12">
+                    <ion-item lines="full">
+                      <ion-label position="floating">Contraseña</ion-label>
+                      <ion-input type="password" [(ngModel)]="contrasenia" name="password"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ion-col>
+              <ion-col sizeXs="12" sizeSm="12" sizeMd="12" sizeLg="6" sizeXl="6">
+                <div class="login-container">
+                  <ion-button expand="block" type="submit">Ingresar</ion-button>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
