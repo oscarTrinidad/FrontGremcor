@@ -66,7 +66,7 @@ export class LoginPage implements OnInit {
             this.navCtrl.navigateRoot('/home');
           }, 1000);
         } else {
-          this.mostrarMensaje(response.message,'danger',1500);
+          this.mostrarMensaje(response.message,'danger',2000);
           loading.dismiss();
         }
       },

@@ -1,4 +1,4 @@
--- Creación de la base de datos
+-- CreaciÃ³n de la base de datos
 CREATE DATABASE DB_GREMCOR;
 GO
 
@@ -6,7 +6,7 @@ GO
 USE DB_GREMCOR;
 GO
 
--- Creación del esquema SEGURIDAD
+-- CreaciÃ³n del esquema SEGURIDAD
 CREATE SCHEMA SEGURIDAD;
 GO
 

@@ -33,7 +33,7 @@ AND vContrasenia = @vContrasenia
 IF(@cantidadValidacion=0 AND @status = 1)
 BEGIN
 	SET @status = -1
-	SET @mensaje = 'El usuario con estas credenciales est· inactivo!'
+	SET @mensaje = 'El usuario con estas credenciales est√° inactivo!'
 END
 
 IF(@status = -1)
